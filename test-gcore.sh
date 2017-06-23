@@ -2,6 +2,8 @@
 #
 # A script to test GATB-Core HDF5 utils.
 #
+# Not to be used as is: it is added into the Docker image within /opt; see Dockerfile.
+#
 # Author: Patrick G. Durand, Inria, June 2017
 
 cd bin

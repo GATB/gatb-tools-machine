@@ -3,6 +3,9 @@
 # A script to be used within a Docker container: it aims at starting a GATB-Tool 
 # program given some parameters.
 #
+# WARNING: not to be used as is. It is added to the Docker image to play the role
+#          of the entrypoint. See Dockefile.
+#
 # Use: ./run-tool.sh -c <command> -- <arguments>
 #
 #        <command>: MUST BE one of (case-sensitive): 
