@@ -33,12 +33,16 @@ Note: provided *Dockerfile* was made and tested using *Docker version 17* on *Ma
 
 ## Build the image
 
+    # prepare a directory
     cd <some-working-directory>
+    # clone this project locally
     git clone https://github.com/GATB/gatb-tools-machine.git
+    # enter the project
     cd gatb-tools-machine
+    # build the images 
+    # (do not forget ending '.': it is part of the docker build command)
     docker build -f Dockerfile -t gatb_tools_machine .
     
-    # Do not forget ending '.': it is part of the docker build command
 
 ## Test the image
 
