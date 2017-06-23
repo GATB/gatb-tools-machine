@@ -34,7 +34,7 @@ Note: provided *Dockerfile* was made and tested using *Docker version 17* on *Ma
 ## Build the image
 
     cd <some-working-directory>
-    git clone 
+    git clone https://github.com/GATB/gatb-tools-machine.git
     docker build -f Dockerfile -t gatb_tools_machine .
     
     # Do not forget ending '.': it is part of the docker build command
