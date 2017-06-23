@@ -68,8 +68,7 @@
 #            Here, we say that current local directory will be viewed as '/tmp'
 #            from the inside of the container. 
 #       [5]: tell Docker which image to start: the 'gatb_tools_machine' of course.
-#       [6]: ask to start the simka program. Other option is to start the 
-#            'visu' task (see below). See companion file 'run_simka.sh' for
+#       [6]: ask to start the simka program. See companion file 'run-tool.sh' for
 #            more information.
 #       [7]: '--' is required to separate arguments [6] from the rest of the
 #            command line
