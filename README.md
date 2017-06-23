@@ -66,11 +66,30 @@ General form of the command to use is as follows:
 
 To illustrate the use of this GATB-Tools Docker Image, let's take the example of running SIMKA tool.
 
-Command to run Simka is as follows:
+When using Simka on the command-line, you use such a command line:
+
+    cd simka/bin
+    ./simka  -in ../example/simka_input.txt -out ./simka_results/ -out-tmp ./simka_temp_output
+    ---1---  ---2-----------------------------------------------------------------------------
+    
+    1: Simka program name
+    2: Simka arguments
+
+Now, to run Simka using the Docker container *gatb_tools_machine*, you simply do this:
+
+    docker run --rm -i -t -v $PWD:/tmp gatb_tools_machine   -c simka -- <Simka arguments>
+    ---1-------------------------------------------------   ---2----    ---3-------------
+    
+    1: Start the Docker container (more on that, below)
+    2: We say that we want to use 'simka' (more on that, below)
+    3: Simka arguments
+
+Here is a real example:
 
     docker run --rm -i -t -v $PWD:/tmp gatb_tools_machine -c simka -- -in /opt/simka/example/simka_input.txt -out /tmp/simka_results/ -out-tmp /tmp/simka_temp_output
 
 You should have Simka results in "$PWD/simka_results" directory when Simka job is done.
+
 This command-line line explained:
 
     docker run                                 [1]
@@ -123,3 +142,7 @@ Documentation is here:
 *  [Short Read Connector](https://github.com/GATB/short_read_connector)
 *  [DiscoSNP++](https://github.com/GATB/DiscoSnp)
 *  [TakeABreak](https://github.com/GATB/TakeABreak)
+
+# License
+
+All GATB-Tools and GATB-Core are covered by [![License](http://img.shields.io/:license-affero-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.en.html).
