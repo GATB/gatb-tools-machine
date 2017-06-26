@@ -1,0 +1,2 @@
+c2.fasta.gz
+c1.fasta.gz
