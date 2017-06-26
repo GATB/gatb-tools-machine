@@ -1,6 +1,6 @@
 # Using GoDocker on the command-line
 
-This document illustrates how to run *gatb\_tools\_machine* jobs on GoDocker from the command-line instead of the web interface.
+This document illustrates how to run *gatb\_tools\_machine* jobs on [GoDocker](https://godocker.genouest.org) from the command-line instead of the web interface.
 
 # Requirements
 
