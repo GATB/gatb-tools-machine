@@ -112,46 +112,50 @@ case "$COMMAND" in
     ./simple_test.sh
     ;;
   h5dump)
-    /opt/gatb-core/bin/h5dump $ALL_ARGS
+    (cd /tmp; /opt/gatb-core/bin/h5dump $ALL_ARGS)
     ;;
   dbgh5)
-    /opt/gatb-core/bin/dbgh5 $ALL_ARGS
+    (cd /tmp; /opt/gatb-core/bin/dbgh5 $ALL_ARGS)
     ;;
   dbginfo)
-    /opt/gatb-core/bin/dbginfo $ALL_ARGS
+    (cd /tmp; /opt/gatb-core/bin/dbginfo $ALL_ARGS)
     ;;
   simka)
-    /opt/simka/bin/simka $ALL_ARGS
+    (cd /tmp; /opt/simka/bin/simka $ALL_ARGS)
     ;;
   simka-visu)
-    python2.7 /opt/simka/scripts/visualization/run-visualization.py $ALL_ARGS
+    (cd /tmp; python2.7 /opt/simka/scripts/visualization/run-visualization.py $ALL_ARGS)
     ;;
   dsk)
-    /opt/dsk/bin/dsk $ALL_ARGS
+    (cd /tmp; /opt/dsk/bin/dsk $ALL_ARGS)
     ;;
   dsk2ascii)
-    /opt/dsk/bin/dsk2ascii $ALL_ARGS
+    (cd /tmp; /opt/dsk/bin/dsk2ascii $ALL_ARGS)
     ;;
   bloocoo)
-    /opt/bloocoo/bin/Bloocoo $ALL_ARGS
+    (cd /tmp; /opt/bloocoo/bin/Bloocoo $ALL_ARGS)
     ;;
   metabloocoo)
-    /opt/bloocoo/bin/metaBloocoo $ALL_ARGS
+    (cd /tmp; /opt/bloocoo/bin/metaBloocoo $ALL_ARGS)
     ;;
   MindTheGap)
-    /opt/MindTheGap/bin/MindTheGap $ALL_ARGS
+    (cd /tmp; /opt/MindTheGap/bin/MindTheGap $ALL_ARGS)
     ;;
   minia)
-    /opt/minia/bin/minia $ALL_ARGS
+    (cd /tmp; /opt/minia/bin/minia $ALL_ARGS)
     ;;
   rconnector)
-    /opt/rconnector/short_read_connector.sh $ALL_ARGS
+    # ShortReadConnector dumps results in current working directory.
+    # No way to change that using SRC command-line, so we use /tmp
+    (cd /tmp; /opt/rconnector/short_read_connector.sh $ALL_ARGS)
     ;;
   discosnp)
-    /opt/discosnp/run_discoSnp++.sh $ALL_ARGS
+    # DiscoSnp dumps results in current working directory.
+    # No way to change that using SRC command-line, so we use /tmp
+    (cd /tmp; /opt/discosnp/run_discoSnp++.sh $ALL_ARGS)
     ;;
   takeabreak)
-    /opt/TakeABreak/bin/TakeABreak $ALL_ARGS
+    (cd /tmp; /opt/TakeABreak/bin/TakeABreak $ALL_ARGS)
     ;;
 esac
 
