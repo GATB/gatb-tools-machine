@@ -130,7 +130,9 @@ This command-line line explained:
 
 ## Running other GATB-Tools
 
-Please refer to the appropriate GATB-Tools to review how to start them.
+The [Wiki of this project](https://github.com/GATB/gatb-tools-machine/wiki) explains how to use the "gatb\_tools\_machine".
+
+In addition, please refer to the appropriate GATB-Tools to review how to use their respective command-line arguments.
 
 Documentation is here:
 
