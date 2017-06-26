@@ -4,7 +4,9 @@ This document explains how you can setup and use *GATB-Tools* within a Docker co
 
 ## What are GATB-Tools?
 
-**GATB-Tools** are softwares built upon the [GATB-Core Library](https://github.com/GATB/gatb-core/wiki). As of June 2017, these are:
+[GATB-Tools](https://gatb.inria.fr/software/) are softwares built upon the [GATB-Core Library](https://github.com/GATB/gatb-core/wiki). 
+
+As of June 2017, this projet includes within a single Docker image :
 
 *  [Simka](https://github.com/GATB/simka)
 *  [DSK](https://github.com/GATB/dsk)
