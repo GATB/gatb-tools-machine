@@ -70,6 +70,6 @@ That's all folks!
 
 ## Want more?
 
-GoDocker master script is: godocker-run.sh. You should not modify that one much.
+GoDocker master script is: [godocker-run.sh](https://github.com/GATB/gatb-tools-machine/blob/master/godocker/godocker-run.sh). You should not modify that one much.
 
-That script sends to the GoDocker server this one: simka.sh. This is the script you could modify to run another job, either Simka or any other GATB-Tools available within *gatb\_tools\_machine*.
+That script sends to the GoDocker server this one: [simka.sh](https://github.com/GATB/gatb-tools-machine/blob/master/godocker/simka.sh). This is the script you could modify to run another job, either Simka or any other GATB-Tools available within *gatb\_tools\_machine*.
