@@ -24,7 +24,7 @@ Then, go to the command-line on your local computer (no need to have a session o
 
 ```
 cd gatb-tools-machine/godocker
-./godocker-test-gtm.sh <godocker-login> <api-token> simka.sh
+./godocker-run.sh <godocker-login> <api-token> simka.sh
 ```
 
 You should see something like:
