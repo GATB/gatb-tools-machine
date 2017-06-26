@@ -145,6 +145,10 @@ Documentation is here:
 *  [DiscoSNP++](https://github.com/GATB/DiscoSnp)
 *  [TakeABreak](https://github.com/GATB/TakeABreak)
 
+# How to use the image on GoDocker?
+
+[Read the Wiki](https://github.com/GATB/gatb-tools-machine/wiki/Using-GoDocker-on-Genouest).
+
 # License
 
 All GATB-Tools and GATB-Core are covered by [![License](http://img.shields.io/:license-affero-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.en.html).
