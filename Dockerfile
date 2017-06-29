@@ -312,6 +312,9 @@ RUN cd /opt \
 #
 COPY run-tool.sh /opt
 
+# Fix: ensure script has exec permission
+RUN chmod +x /opt/run-tool.sh
+
 # ###
 #     Start a GATB-Tool. See "run-tool.sh" header for more information.
 #
