@@ -209,7 +209,7 @@ RUN cd /opt \
     && mv gatb-h5dump h5dump
 
 COPY test-gcore.sh /opt/gatb-core
-RUN cd /opt/gatb-core && ./test-gcore.sh
+RUN cd /opt/gatb-core && ./test-gcore.sh  && rm -f /opt/gatb-core/bin/reads3.fa.h5
 
 # ###
 #     MINIA installation: get the binary release from Github mirror.
