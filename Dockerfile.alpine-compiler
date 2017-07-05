@@ -55,19 +55,14 @@ RUN apk update && \
 
 RUN apk add --no-cache python2
 
-#
-# The following should be replaced by an external script, then mounting a volume
-# within the container that targets the directory with source to compile. Since 
-# all GATB softwares have the same design, this is quite obvious to do.
-#
-
+# Add the build script
 COPY build.sh /usr/bin
 
 # Fix: ensure script has exec permission
 RUN chmod +x /usr/bin/build.sh
 
 # ###
-#     Start a GATB-Tool. See "run-tool.sh" header for more information.
+#     Start to make a GATB-Tool. See "build.sh" header for more information.
 #
 ENTRYPOINT ["/usr/bin/build.sh"]
 
