@@ -1,0 +1,73 @@
+#########################################################################################
+#
+# E X P E R I M E N T A L: do not use in production.
+#
+# Docker container based on Alpine Linux. It aims at compiling GATB based
+# softwares using Alpine c/c++ compiler.
+#
+#########################################################################################
+#
+# == Docker build command:
+#
+#    docker build -f Dockerfile.alpine-compiler -t gatb_tools_alpine_compiler .
+#
+# == Docker run command:
+#
+#    see companion scripts "build.sh" to review how to use this Alpine c/c++ complier.
+#
+#########################################################################################
+
+FROM alpine:3.6
+
+# who to blame?
+MAINTAINER Patrick Durand patrick.durand@inria.fr
+
+# ###
+#
+# Base image to compile GATB softwares using an Alpine Linux OS.
+#
+# Package installation and configuration:
+#
+#     1. We need zlib, libc and libc++ to execute GATB-Tools
+#     2. we need cmake, make and c/c++ compiler to compile GATB softwares
+#     3. GATB-Tools dependencies are as follows: 
+#        a. Simka     : python-2.7 and R (only for visual task, 
+#                       not for compiling/testing)
+#        b. Bloocoo   : none
+#        c. DSK       : coreutil (DSK test script uses the paste command)
+#        d. MindTheGap: util-linux (MindTheGap test script requires the command
+#                       'column' which is included in bsdmainutils Debian package)
+#        e. Minia     : none
+#        f. RConnector: none
+#        g. DiscoSnp  : python-2.7 (require to run tests)
+#        h. TakeABreak: none
+#        i. all       : bash (test scripts), curl (to get tarballs from Gitub)
+#     4. to fix this issue: https://github.com/GATB/gatb-core/commit/f8a39fa3de
+#        we have to do: touch vtimes.h: 
+#
+RUN apk update && \
+    apk add --no-cache \
+    bash util-linux coreutils \
+    curl \
+    make cmake gcc g++ libstdc++ libgcc \
+    zlib-dev && \
+    touch /usr/include/sys/vtimes.h
+
+RUN apk add --no-cache python2
+
+#
+# The following should be replaced by an external script, then mounting a volume
+# within the container that targets the directory with source to compile. Since 
+# all GATB softwares have the same design, this is quite obvious to do.
+#
+
+COPY build.sh /usr/bin
+
+# Fix: ensure script has exec permission
+RUN chmod +x /usr/bin/build.sh
+
+# ###
+#     Start a GATB-Tool. See "run-tool.sh" header for more information.
+#
+ENTRYPOINT ["/usr/bin/build.sh"]
+
