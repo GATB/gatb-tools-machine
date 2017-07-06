@@ -23,7 +23,11 @@
 #
 #    docker run --rm -i -t gatb_tools_machine -c test
 #
-#    -> you should see a all GATB-Tools tests with some provided data.
+#    -> you should see all GATB-Tools tests with some provided data.
+#
+#    docker run --rm -i -t gatb_tools_machine -c version
+#
+#    -> you should see version of all GATB-Tools contained here.
 #
 # == Running a Tool job:
 #
@@ -175,7 +179,7 @@ RUN cd /opt \
 #     MINDTHEGAP installation: get the binary release from Github mirror.
 #
 #     We always use the latest official binary release available.
-ENV MIND_VERSION=2.0.1
+ENV MIND_VERSION=2.0.2
 RUN cd /opt \
     && export MIND_TGZ=MindTheGap-v${MIND_VERSION}-bin-Linux.tar.gz \
     && export GIT_URL=https://github.com/GATB/MindTheGap/releases/download \

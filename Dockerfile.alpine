@@ -39,7 +39,11 @@
 #
 #    docker run --rm -i -t gatb_tools_machine -c test
 #
-#    -> you should see a all GATB-Tools tests with some provided data.
+#    -> you should see all GATB-Tools tests with some provided data.
+#
+#    docker run --rm -i -t gatb_tools_machine -c version
+#
+#    -> you should see version of all GATB-Tools contained here.
 #
 # == Running a Tool job:
 #
@@ -115,14 +119,6 @@ RUN apk add --no-cache python2
 #  ../bin/simka: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory
 ENV LD_LIBRARY_PATH=/lib:/lib64:/usr/lib
 
-# Prepare some specific stuffs per tool. Principle: create a specific directory
-# in the container and put there tool's elements.
-# Example of MindTheGap: test scripts as provided in the 2.0.1 binary package 
-# do not work on Alpine Linux (problem with diff command). So we provide new
-# scripts that are fine with diff command provided with Alpine.
-RUN mkdir -p /opt/tools-tmp/mindthegap
-COPY ./tools/mindthegap/*.sh /opt/tools-tmp/mindthegap/
-
 # ###
 #     SIMKA installation: get the binary release from Github mirror.
 #
@@ -186,7 +182,7 @@ RUN cd /opt \
 #     MINDTHEGAP installation: get the binary release from Github mirror.
 #
 #     We always use the latest official binary release available.
-ENV MIND_VERSION=2.0.1
+ENV MIND_VERSION=2.0.2
 RUN cd /opt \
     && export MIND_TGZ=MindTheGap-v${MIND_VERSION}-bin-Linux.tar.gz \
     && export GIT_URL=https://github.com/GATB/MindTheGap/releases/download \
@@ -197,7 +193,6 @@ RUN cd /opt \
     && cd MindTheGap/bin \
     && chmod +x * \
     && cd ../test \
-    && cp /opt/tools-tmp/mindthegap/*.sh . \
     && chmod +x *.sh \
     && ./simple_test.sh
 
@@ -315,4 +310,3 @@ RUN chmod +x /opt/run-tool.sh
 #     Start a GATB-Tool. See "run-tool.sh" header for more information.
 #
 ENTRYPOINT ["/opt/run-tool.sh"]
-
