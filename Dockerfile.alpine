@@ -2,7 +2,17 @@
 #
 # E X P E R I M E N T A L: do not use in production.
 #
-# Docker container based on Alpine Linux.
+# Docker container based on Alpine Linux. It contained standard GATB-Tool binaries
+# originally made using gcc/g++ compiler on a Debian 7 system. 
+#
+# PROS: no need to recompile GATB-Tools
+# Big CONS: binaries generate libc++ version warnings... 
+#
+# Solution: 
+#  1. use Dockerfile.alpine-compiler to generate native GATB-Tool binaries
+#     for Alpine Linux
+#  2. use Dockerfile.alpine2 to wrap these binaires into a single compact Alpine
+#     container. Here, GATB-Tools work like a charm without any libc++ warnings.
 #
 #########################################################################################
 #

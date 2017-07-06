@@ -1,0 +1,181 @@
+#########################################################################################
+#
+# P R O D U C T I O N    R E A D Y
+#
+# Docker container fully based on Alpine Linux: contained GATB-Tools compiled
+# using native Alpine c/c++ tools.
+#
+#########################################################################################
+#
+#  Docker file for GATB-Tools project.
+#
+#  It prepares a Docker container to run various GATB-Tools jobs: 
+#
+#    Simka               : https://github.com/GATB/simka       <== Visualization not working (see below)
+#    DSK                 : https://github.com/GATB/dsk
+#    BLOOCOO             : https://github.com/GATB/bloocoo
+#    MindTheGap          : https://github.com/GATB/MindTheGap  <== NOT working in Alpine Container (see below)
+#    MINIA               : https://github.com/GATB/minia
+#    DISCOSNP            : https://github.com/GATB/DiscoSnp
+#    TAKEABREAK          : https://github.com/GATB/TakeABreak
+#    
+#########################################################################################
+#
+# == Docker build command:
+#
+#    docker build -f Dockerfile.alpine2 -t gatb_tools_alpine_machine .
+#
+# == Running a Tool job:
+#
+#    docker run --rm -i -t gatb_tools_alpine_machine -c <command> -- <arguments>
+#
+#    where:
+#        <command>: see ./run-tool.sh
+#      <arguments>: see ./run-tool.sh
+#
+#      It is worth noting that "test" task is NOT available with this container.
+#      Indeed, to reduce image size, test framework of each tool is discarded to
+#      to make this gatb_tools_alpine_machine Docker container.
+#
+# == Sample Simka job with provided data:
+#    
+#    To illustrate the use of this GATB-Tools Docker Image, let's take the example of
+#    running SIMKA tool.
+#
+#    docker run --rm -i -t -v $PWD/data:/tmp gatb_tools_alpine_machine -c simka -- -in /tmp/simka/simka_input.txt -out /tmp/simka_results/ -out-tmp /tmp/simka_temp_output
+#
+#    -> you should have results in $PWD/simka_results directory when Simka job is done.
+#
+# == Additional notes
+# 
+#   Root access inside the container:
+#
+#     - if not yet running: docker run --rm --entrypoint bash -i -t gatb_tools_alpine_machine
+#
+#########################################################################################
+
+FROM alpine:3.6
+# (image size after: 4Mb)
+
+# who to blame?
+MAINTAINER Patrick Durand patrick.durand@inria.fr
+
+# ###
+#     Package installation and configuration
+#
+#     1. We need zlib, glibc and libc++ to execute GATB-Tools
+#     2. GATB-Tools dependencies are as follows: 
+#        a. Simka     : python-2.7 and R (visu tasks only)
+#        b. Bloocoo   : none
+#        c. DSK       : coreutil (DSK test script uses the 'paste' command)
+#        d. MindTheGap: util-linux (MindTheGap test script requires the 'column'
+#                       command)
+#        e. Minia     : none
+#        f. RConnector: none
+#        g. DiscoSnp  : python-2.7
+#        h. TakeABreak: none
+#        i. all       : bash (convenient shell)
+#     3. we need curl to reuse "as is" GATB-Tools Docker install commands 
+#        from Debian Dockerfile
+#     4. we create the /opt directory to deploy GATB-Tools
+#
+RUN apk update && \
+    apk add --no-cache \
+    bash util-linux coreutils \
+    curl \
+    libstdc++ libgcc \
+    zlib-dev && \
+    mkdir -p /opt
+# (image size after: 20Mb)
+
+# ###
+#     We install R 
+# from: https://github.com/sgerrand/alpine-pkg-R
+RUN curl -ksL https://github.com/sgerrand/alpine-pkg-R/releases/download/3.3.1-r0/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub && \
+    curl -ksL https://github.com/sgerrand/alpine-pkg-R/releases/download/3.3.1-r0/R-3.3.1-r0.apk -o R-3.3.1-r0.apk && \
+    apk add R-3.3.1-r0.apk
+# (image size after: 133Mb)
+
+# ###
+#     We install Python 2.7
+RUN apk add --no-cache python2 
+# (image size after: 169Mb)
+
+# ###
+#     And, last but not least, we deploy GATB-Tools for which we have an Alpine binary bundle.
+#     Get the Alpine binary bundles from Forge Inria.
+ENV FORGE_URL=http://gatb-tools.gforge.inria.fr/ci-inria/
+
+# ###
+#     SIMKA installation 
+#
+#     We always use the latest official binary release available.
+ENV SIMKA_VERSION=1.4.0
+RUN cd /opt \
+    && export TOOL_TGZ=simka-v${SIMKA_VERSION}-bin-Alpine.tar.gz \
+    && export TOOL_URL=${FORGE_URL}/${TOOL_TGZ} \
+    && curl -ksL ${TOOL_URL} | tar xz \
+    && rm -f ${TOOL_TGZ} \
+    && mv simka-v${SIMKA_VERSION}-bin-Alpine simka \
+    && cd simka/bin \
+    && chmod +x simka* 
+# (image size after: 189Mb)
+
+# ###
+#     DSK installation
+#
+#     We always use the latest official binary release available.
+ENV DSK_VERSION=2.2.0
+RUN cd /opt \
+    && export TOOL_TGZ=dsk-v${DSK_VERSION}-bin-Alpine.tar.gz \
+    && export TOOL_URL=${FORGE_URL}/${TOOL_TGZ} \
+    && curl -ksL ${TOOL_URL} | tar xz \
+    && rm -f ${TOOL_TGZ} \
+    && mv dsk-v${DSK_VERSION}-bin-Alpine dsk \
+    && cd dsk/bin \
+    && chmod +x * 
+# (image size after: 204Mb)
+
+# ###
+#     BLOOCOO installation
+#
+#     We always use the latest official binary release available.
+ENV BLOOCOO_VERSION=1.0.7
+RUN cd /opt \
+    && export TOOL_TGZ=Bloocoo-v${BLOOCOO_VERSION}-bin-Alpine.tar.gz \
+    && export TOOL_URL=${FORGE_URL}/${TOOL_TGZ} \
+    && curl -ksL ${TOOL_URL} | tar xz \
+    && rm -f ${TOOL_TGZ} \
+    && mv Bloocoo-v${BLOOCOO_VERSION}-bin-Alpine bloocoo \
+    && cd bloocoo/bin \
+    && chmod +x * 
+# (image size after: 213Mb)
+
+# ###
+#     TAKE-A-BREAK installation
+#
+#     We always use the latest official binary release available.
+ENV TABK_VERSION=1.1.2
+RUN cd /opt \
+    && export TOOL_TGZ=TakeABreak-v${TABK_VERSION}-bin-Alpine.tar.gz \
+    && export TOOL_URL=${FORGE_URL}/${TOOL_TGZ} \
+    && curl -ksL ${TOOL_URL} | tar xz \
+    && rm -f ${TOOL_TGZ} \
+    && mv TakeABreak-v${TABK_VERSION}-bin-Alpine TakeABreak \
+    && cd TakeABreak/bin \
+    && chmod +x * 
+# (image size after: 229Mb)
+
+# ###
+#     Starter script.
+#
+COPY run-tool.sh /opt
+
+# Fix: ensure script has exec permission
+RUN chmod +x /opt/run-tool.sh
+
+# ###
+#     Start a GATB-Tool. See "run-tool.sh" header for more information.
+#
+ENTRYPOINT ["/opt/run-tool.sh"]
+

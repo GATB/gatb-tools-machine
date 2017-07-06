@@ -1,6 +1,6 @@
 #########################################################################################
 #
-# E X P E R I M E N T A L: do not use in production.
+# P R O D U C T I O N    R E A D Y
 #
 # Docker container based on Alpine Linux. It aims at compiling GATB based
 # softwares using Alpine c/c++ compiler.
@@ -60,6 +60,14 @@ COPY build.sh /usr/bin
 
 # Fix: ensure script has exec permission
 RUN chmod +x /usr/bin/build.sh
+
+# Run this container as non-root
+#   testing machine: use pdurand account
+#   production machine: use Jenkins account
+RUN adduser -D -H -u 502 pdurand
+RUN adduser -D -H -u 1000 ci
+# Note: we do not use Docker 'USER' command here. Instead, use "--user xxx"
+# with "docker run" command.
 
 # ###
 #     Start to make a GATB-Tool. See "build.sh" header for more information.

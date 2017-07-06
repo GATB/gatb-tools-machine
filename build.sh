@@ -1,7 +1,12 @@
 #!/bin/bash
 
+#########################################################################################
+#
 # Companion file to be used with Dockerfile.alpine-compiler
-
+#
+# This script is embedded within the container: it is responsible for compiling
+# GATB-Tools.
+#
 #########################################################################################
 #
 # A shell script to compile GATB-Tools using Alpine system: c/c++ libs and compiler.
@@ -102,6 +107,12 @@ TEST_DIR_ERROR=10
 TEST_SCRIPT_ERROR=11
 CP1_BIN_ERROR=12
 CP2_BIN_ERROR=13
+# Figure out whether or not this script get GATB-Tool official archives
+# (source and binary) from Github. Set to zero if using Docker container
+# on INRIA-CI platform: access to the web is not allowed.
+DO_CURL=0
+# set a dedicated time format
+TIMEFORMAT='      Time - real:%3lR | user:%3lU | sys:%3lS'
 
 # ##  MAIN  #############################################################################
 
@@ -121,7 +132,9 @@ if [ "$nb_strings" -ne 5 ]; then
     exit $ARGS_ERROR
 fi
 
-# == STEP 1: get source code
+# == STEP 1: get source code if requested. This step is optional
+# since using this script within Docker containers on Inria CI
+# platform prevents any remote connection to the Internet.
 # Be sure we are in the appropriate directory
 cd ${WK_DIR}
 # get gatb-tool fields: names and release nb.
@@ -129,16 +142,18 @@ arr=(${GATB_TOOL_DESCRIPTION//;/ })
 FNAME=${arr[0]}-v${arr[3]}
 echo "##  Making: ${FNAME}"
 # Prepare the curl command
-TOOLTGZ=${arr[1]}-v${arr[3]}-Source.tar.gz
-GIT_URL=https://github.com/GATB/${arr[0]}/releases/download
-TOOLURL=${GIT_URL}/v${arr[3]}/${TOOLTGZ}
-echo "    getting source from: ${TOOLURL} ..."
-curl -ksL ${TOOLURL} | tar xz
-if [ ! $? -eq 0 ]; then
-    echo "    FAILED"
-    exit $CURL_SRC_ERROR
+if [ "$DO_CURL" -eq "1" ]; then
+  TOOLTGZ=${arr[1]}-v${arr[3]}-Source.tar.gz
+  GIT_URL=https://github.com/GATB/${arr[0]}/releases/download
+  TOOLURL=${GIT_URL}/v${arr[3]}/${TOOLTGZ}
+  echo "    getting source from: ${TOOLURL} ..."
+  time curl -ksL ${TOOLURL} | tar xz
+  if [ ! $? -eq 0 ]; then
+      echo "    FAILED"
+      exit $CURL_SRC_ERROR
+  fi
+  echo "      OK"
 fi
-echo "      ok"
 
 # == STEP 2: compile source code
 # Prepare the cmake/make call
@@ -154,41 +169,46 @@ echo "    running CMake in: $PWD ..."
 if [ ${arr[0]} == "minia" ]; then
   # As of July 2017, do not understand why classical cmake with 
   # debug=off does not work with minia tool
-  cmake -DCMAKE_BUILD_TYPE=Release .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
+  time cmake -DCMAKE_BUILD_TYPE=Release .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
 else
   # No LTO:
-  cmake -Ddebug=OFF -DCMAKE_BUILD_TYPE=Release .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
+  time cmake -Ddebug=OFF -DCMAKE_BUILD_TYPE=Release .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
   # With LTO:
-  # cmake -Ddebug=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -flto" -DCMAKE_AR="/usr/bin/gcc-ar" -DCMAKE_CXX_ARCHIVE_FINISH="" ..
+  # time cmake -Ddebug=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG -flto" -DCMAKE_AR="/usr/bin/gcc-ar" -DCMAKE_CXX_ARCHIVE_FINISH="" ..
 fi
 if [ ! $? -eq 0 ]; then
     echo "    CMake: FAILED."
     echo "     See: ${WK_DIR}/${FNAME}-CMake.log"
     exit $CMAKE_ERROR
 fi 
-echo "      ok"
+echo "      OK"
+
 echo "    running make ..."
-make -j${CORES} > ${WK_DIR}/${FNAME}-make.log 2>&1 
+time make -j${CORES} > ${WK_DIR}/${FNAME}-make.log 2>&1 
 if [ ! $? -eq 0 ]; then
     echo "    make: FAILED"
     echo "     See: ${WK_DIR}/${FNAME}-make.log"
     exit $MAKE_ERROR
 fi
-echo "      ok"
+echo "      OK"
 cd ${WK_DIR}
 
-# == STEP 3: get Linux binary bundle
+# == STEP 3: get Linux binary bundle if requested. This step is optional
+# since using this script within Docker containers on Inria CI
+# platform prevents any remote connection to the Internet.
 # Prepare the curl command to get std Linux binary bundle
-TOOLTGZ=${arr[1]}-v${arr[3]}-bin-Linux.tar.gz
-GIT_URL=https://github.com/GATB/${arr[0]}/releases/download
-TOOLURL=${GIT_URL}/v${arr[3]}/${TOOLTGZ}
-echo "    getting std Linux binary from: ${TOOLURL} ..."
-curl -ksL ${TOOLURL} | tar xz
-if [ ! $? -eq 0 ]; then
-    echo "    FAILED"
-    exit $CURL_BIN_ERROR
+if [ "$DO_CURL" -eq "1" ]; then
+  TOOLTGZ=${arr[1]}-v${arr[3]}-bin-Linux.tar.gz
+  GIT_URL=https://github.com/GATB/${arr[0]}/releases/download
+  TOOLURL=${GIT_URL}/v${arr[3]}/${TOOLTGZ}
+  echo "    getting std Linux binary from: ${TOOLURL} ..."
+  curl -ksL ${TOOLURL} | tar xz
+  if [ ! $? -eq 0 ]; then
+      echo "    FAILED"
+      exit $CURL_BIN_ERROR
+  fi
+  echo "      OK"
 fi
-echo "      ok"
 
 # == STEP 4: prepare Alpine binary bundle
 # update that archive: replace bin programs with Alpine ones
@@ -218,7 +238,7 @@ if [ ! $? -eq 0 ]; then
     echo "    FAILED: unable to copy ${arr[0]} h5dump binary"
     exit $CP2_BIN_ERROR
 fi
-echo "      ok"
+echo "      OK"
 # we run tool's test suite if available 
 if [ ! ${arr[4]} == "none" ]; then
   # during previous, we are in 'bin' directory. Tests, if any, are
@@ -250,7 +270,7 @@ if [ ! ${arr[4]} == "none" ]; then
       echo "     See: ${WK_DIR}/${FNAME}-test.log"
       exit $TEST_ERROR_CODE
   fi
-  echo "      ok"
+  echo "      OK"
 fi
 
 # == STEP 5: package Alpine binary bundle
@@ -261,13 +281,13 @@ cd ${WK_DIR}
 [ -e ${TAR_BAL} ] && rm -f ${TAR_BAL}
 # remove all testing stuff to reduce package size
 cd ${TOOL_BASE_NAME}-bin-Alpine
-rm -rf test*  data > /dev/null 2>&1
+rm -rf test* data example > /dev/null 2>&1
 cd ..
 # package the Alpine bundle for gatb-tool ${arr[2]}
 tar -cf ${TOOL_BASE_NAME}-bin-Alpine.tar ${TOOL_BASE_NAME}-bin-Alpine
-gzip ${TOOL_BASE_NAME}-bin-Alpine.tar
-# made some cleanup
-rm -rf ${TOOL_BASE_NAME}-bin-Alpine
-echo "      ok"
+time gzip ${TOOL_BASE_NAME}-bin-Alpine.tar
+# made some additional cleanup
+rm -rf ${TOOL_BASE_NAME}-bin-Alpine ${TOOL_BASE_NAME}-Source
+echo "      OK"
 
 exit 0
