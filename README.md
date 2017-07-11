@@ -43,6 +43,21 @@ Note: provided *Dockerfile* was made and tested using *Docker version 17* on *Ma
 
 [Read the Wiki](https://github.com/GATB/gatb-tools-machine/wiki/Using-GoDocker-on-Genouest)
 
+# Files
+
+| **File name** | **Description** |
+|---------------|-----------------|
+| Dockerfile    | Production ready material: the main Docker file to use to create the GATB-Tools machine. This is the one cited in above sections. |
+| Dockerfile.alpine | An alternative way to build the GATB-Tools machine, using Alpine Linux instead of Debian. Experimental material: use with caution. Read more [here](https://github.com/GATB/gatb-tools-machine/wiki/Optimising-Docker-Container-size-using-Alpine-Linux). |
+| Dockerfile.alpine-compiler | Production ready material: an Alpine based c/c++ compiler to prepare Alpine native binaries of GATB-Tools. Read more [here](https://github.com/GATB/gatb-tools-machine/wiki/Optimising-Docker-Container-size-using-Alpine-Linux). |
+| Dokcerfile.alpine2 | Production ready material: the Dockerfile to use to create a compact GATB-Tools machine. Read more [here](https://github.com/GATB/gatb-tools-machine/wiki/Optimising-Docker-Container-size-using-Alpine-Linux). |
+| build.sh | Companion file of  Dockerfile.alpine-compiler |
+| make_all.sh | Companion file of Dockerfile.alpine-compiler. Actually, it is the one to use to generate GATB-Tool Alpine binaries: 'make_all.sh' script invokes 'Dockerfile.alpine-compiler' container. |
+| run-tool.sh | Starter script of Docker containers (i.e. ENTRYPOINT) |
+| test-gcore.sh | Companion file of Dockerfile |
+| data | Directory with test material for all GATB-Tools |
+| godocker | Directory with material illustrating how to use GATB-Tools-Machine on the [GoDocker platform](http://www.genouest.org/godocker/). |
+
 # License
 
 All GATB-Tools and GATB-Core are covered by [![License](http://img.shields.io/:license-affero-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.en.html).
