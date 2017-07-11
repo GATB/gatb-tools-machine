@@ -168,8 +168,8 @@ cd build
 echo "    running CMake in: $PWD ..."
 if [ ${arr[0]} == "minia" ]; then
   # As of July 2017, do not understand why classical cmake with 
-  # debug=off does not work with minia tool
-  time cmake -DCMAKE_BUILD_TYPE=Release .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
+  # debug=off and -DCMAKE_BUILD_TYPE=Release does not work with minia tool
+  time cmake .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
 else
   # No LTO:
   time cmake -Ddebug=OFF -DCMAKE_BUILD_TYPE=Release .. > ${WK_DIR}/${FNAME}-CMake.log 2>&1 
@@ -234,8 +234,12 @@ if [ ${arr[0]} == "minia" ]; then
 else
   cp ../../${TOOL_BASE_NAME}-Source/build/ext/gatb-core/bin/Release/h5dump .
 fi
+# some tools also require to have dbgh5 (e.g. Discosnp)
+if [ ${arr[0]} == "DiscoSnp" ]; then
+  cp ../../${TOOL_BASE_NAME}-Source/build/ext/gatb-core/bin/Release/dbgh5 .
+fi
 if [ ! $? -eq 0 ]; then
-    echo "    FAILED: unable to copy ${arr[0]} h5dump binary"
+    echo "    FAILED: unable to copy ${arr[0]} dbgh5 binary"
     exit $CP2_BIN_ERROR
 fi
 echo "      OK"
