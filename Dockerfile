@@ -254,7 +254,7 @@ RUN cd /opt \
 #     DISCO-SNP installation: get the binary release from Github mirror.
 #
 #     We always use the latest official binary release available.
-ENV DSNP_VERSION=2.2.10
+ENV DSNP_VERSION=2.3.0
 RUN cd /opt \
     && export DSNP_TGZ=DiscoSNP.-v${DSNP_VERSION}-bin-Linux.tar.gz \
     && export GIT_URL=https://github.com/GATB/DiscoSnp/releases/download \
